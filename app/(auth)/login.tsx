@@ -1,25 +1,16 @@
-// app/(auth)/login.tsx
+import { FacebookAuthProvider, signInWithPopup } from 'firebase/auth';
 import React, { useState } from 'react';
-import { 
-  View, 
-  TextInput, 
-  TouchableOpacity, 
-  Text, 
-  StyleSheet, 
-  ActivityIndicator,
-  Image
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ActivityIndicator
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { 
-  signInWithEmailAndPassword, 
-  GoogleAuthProvider, 
-  signInWithCredential
-} from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../config/firebase';
-import * as Google from 'expo-auth-session/providers/google';
-import * as WebBrowser from 'expo-web-browser';
-
-WebBrowser.maybeCompleteAuthSession();
 
 interface ErrorState {
   email?: string;
@@ -33,32 +24,6 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<ErrorState>({});
   const router = useRouter();
-
-  const [_, googleResponse, googlePromptAsync] = Google.useAuthRequest({
-    clientId: '569468078664-m52krekhgtrigh67mn36ai5pd534qvi3.apps.googleusercontent.com',
-    androidClientId: '483138507573-im1ufvgg1nf26tkpei9d724gihgsfhse.apps.googleusercontent.com',
-    iosClientId: '483138507573-89gsj3ktu8n75e52okkpjgl7g5adoqd0.apps.googleusercontent.com',
-  });
-
-  React.useEffect(() => {
-    if (googleResponse?.type === 'success') {
-      const { id_token } = googleResponse.params;
-      handleGoogleSignIn(id_token);
-    }
-  }, [googleResponse]);
-
-  const handleGoogleSignIn = async (idToken: string) => {
-    try {
-      setLoading(true);
-      const credential = GoogleAuthProvider.credential(idToken);
-      await signInWithCredential(auth, credential);
-      router.replace('/events' as const);
-    } catch (error: any) {
-      setErrors({ general: 'Error al iniciar sesión con Google' });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleEmailLogin = async () => {
     if (!validateForm()) return;
@@ -82,6 +47,18 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
+
+  const handleFacebookLogin = async () => {
+    try {
+      const provider = new FacebookAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      console.log('Usuario:', result.user);
+      router.replace('/events');
+    } catch (error) {
+      console.error('Error con Facebook:', error);
+      setErrors({ general: 'Error al iniciar sesión con Facebook' });
+    }
+  };
   return (
     <View style={styles.container}>
       {errors.general && (
@@ -117,7 +94,7 @@ export default function Login() {
         {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
       </View>
 
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.button}
         onPress={handleEmailLogin}
         disabled={loading}
@@ -128,26 +105,16 @@ export default function Login() {
           <Text style={styles.buttonText}>Iniciar Sesión</Text>
         )}
       </TouchableOpacity>
-
-      <View style={styles.dividerContainer}>
-        <View style={styles.divider} />
-        <Text style={styles.dividerText}>O</Text>
-        <View style={styles.divider} />
-      </View>
-
-      <TouchableOpacity 
-        style={styles.googleButton}
-        onPress={() => googlePromptAsync()}
+      <TouchableOpacity
+        style={styles.facebookButton}
+        onPress={handleFacebookLogin}
         disabled={loading}
       >
-        <Image 
-          source={require('../../assets/google-icon.png.webp')} 
-          style={styles.googleIcon}
-        />
-        <Text style={styles.googleButtonText}>Continuar con Google</Text>
+        <Text style={styles.buttonText}>Iniciar sesión con Facebook</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity 
+
+      <TouchableOpacity
         onPress={() => router.push('/register' as const)}
         style={styles.linkContainer}
       >
@@ -214,38 +181,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 14,
   },
-  dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 20,
-  },
-  divider: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#ddd',
-  },
-  dividerText: {
-    marginHorizontal: 10,
-    color: '#666',
-  },
-  googleButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff',
+  facebookButton: {
+    backgroundColor: '#4267B2',
     padding: 15,
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
     marginBottom: 10,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  googleIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 10,
-  },
-  googleButtonText: {
-    color: '#333',
-    fontSize: 16,
-  }
 });
