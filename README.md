@@ -42,7 +42,7 @@ Aplicación móvil desarrollada en React Native para permitir a una comunidad lo
 ## Guia de Instalación 💻
 
 1. Seleccionar una carpeta de su equipo local donde clonará y almacenará el repositorio
-2. Una vez seleccionada la carpeta, abra "Git Bash" y ejecute el comando `git clone https://github.com/ManuelGamez/ProyectoDSM2021.git`
+2. Una vez seleccionada la carpeta, abra "Git Bash" y ejecute el comando `git clone https://github.com/FsquijadaA/Eventos-comunitarios`
 3. Crear una rama de colaboración para poder agregar los cambios realizados a Github.
 4. Una vez esté conectado al repositorio y haya creado su rama, puede comenzar a colaborar desde su equipo local.
 5. Ejecute el comando `npm install` para instalar las dependencias necesarias.
@@ -76,6 +76,5 @@ La licenciante no puede revocar estas libertades en tanto usted siga los términ
 ## Enlaces de interés 👀
 
 - [Tablero en Trello] - https://trello.com/invite/b/68367e9994ddd7e64455f976/ATTIce0630d5d8240bb515a0264db9e38008141B74C5/proyecto-dps  
-- [Manual de usuario en la nube] - https://[Por Agregar]  
 - [Video de funcionamiento] - https://[Por Agregar]  
 - [Enlace a Mockups] - https://balsamiq.cloud/srifj34/pugqnwh  
