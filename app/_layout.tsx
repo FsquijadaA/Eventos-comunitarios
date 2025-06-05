@@ -41,6 +41,11 @@ async function registerForPushNotificationsAsync() {
 
 export default function RootLayout() {
   const segments = useSegments();
+  const isAuthPage =
+    Array.isArray(segments) &&
+    segments[0] === '(auth)' &&
+    (segments[1] === 'login' || segments[1] === 'register');
+
   const router = useRouter();
   const [upcomingEventMsg, setUpcomingEventMsg] = useState<string | null>(null);
 
@@ -108,22 +113,24 @@ export default function RootLayout() {
   };
 
   return (
-      <>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <FlashMessage position="top" />
+    <>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="+not-found" />
+      </Stack>
+      <FlashMessage position="top" />
 
-        {upcomingEventMsg && (
-            <View style={styles.bannerContainer}>
-              <Text style={styles.bannerText}>{upcomingEventMsg}</Text>
-            </View>
-        )}
+      {upcomingEventMsg && (
+        <View style={styles.bannerContainer}>
+          <Text style={styles.bannerText}>{upcomingEventMsg}</Text>
+        </View>
+      )}
 
+      {!isAuthPage && (
         <TouchableOpacity style={styles.floatingStatsButton} onPress={() => router.push('/events/my_events')}>
           <Text style={styles.floatingStatsButtonText}>📊 Estadísticas</Text>
         </TouchableOpacity>
-      </>
+      )}
+    </>
   );
 }
 

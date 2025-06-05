@@ -18,6 +18,7 @@ import {
   onSnapshot,
   query,
   orderBy,
+  updateDoc,
 } from 'firebase/firestore';
 import { auth, db, Timestamp } from '../../../config/firebase';
 import { Ionicons } from '@expo/vector-icons';
@@ -30,22 +31,39 @@ interface Comment {
   timestamp: Timestamp;
   score: number;
 }
+interface EventData {
+  id: string;
+  title: string;
+  description: string;
+  location: string;
+  date: Timestamp;
+  attendees?: string[];
+  createdBy: string;
+}
+
 
 const EventDetailsScreen = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const [event, setEvent] = useState<any>(null);
+  const [event, setEvent] = useState<EventData | null>(null);
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState<Comment[]>([]);
   const [userHasCommented, setUserHasCommented] = useState(false);
   const [score, setScore] = useState<number>(5);
+  const [isAttending, setIsAttending] = useState(false);
 
   useEffect(() => {
     const fetchEvent = async () => {
       const docRef = doc(db, 'events', id!);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        setEvent({ id: docSnap.id, ...docSnap.data() });
+        const data = docSnap.data() as Omit<EventData, 'id'>; // aseguras el resto de propiedades
+        const eventData: EventData = { id: docSnap.id, ...data };
+        setEvent(eventData);
+        const currentUser = auth.currentUser;
+        if (currentUser && eventData.attendees?.includes(currentUser.uid)) {
+          setIsAttending(true);
+        }
       } else {
         Alert.alert('Evento no encontrado');
         router.back();
@@ -88,6 +106,28 @@ const EventDetailsScreen = () => {
 
     return () => unsubscribeComments();
   }, [id]);
+
+  const handleAttend = async () => {
+    const user = auth.currentUser;
+    if (!user || !event) return;
+
+    if (isAttending) {
+      Alert.alert('Ya estás inscrito en este evento.');
+      return;
+    }
+
+    try {
+      const updated = [...(event.attendees || []), user.uid];
+      await updateDoc(doc(db, 'events', id!), { attendees: updated });
+      setEvent({ ...event, attendees: updated });
+      setIsAttending(true);
+      Alert.alert('Te has inscrito al evento');
+    } catch (err) {
+      console.error('Error al asistir:', err);
+      Alert.alert('Error', 'No se pudo registrar tu asistencia');
+    }
+  };
+
 
   const handleAddComment = async () => {
     const user = auth.currentUser;
@@ -145,6 +185,8 @@ const EventDetailsScreen = () => {
 
   if (!event) return <Text style={styles.loadingText}>Cargando evento...</Text>;
 
+  const isCreator = event.createdBy === auth.currentUser?.uid;
+
   return (
     <ScrollView style={styles.container}>
       <Pressable onPress={() => router.back()} style={styles.backButton}>
@@ -159,15 +201,21 @@ const EventDetailsScreen = () => {
         Fecha: {new Date(event.date?.seconds * 1000).toLocaleString()}
       </Text>
 
+      {!isCreator && !isAttending && (
+        <Pressable style={styles.attendButton} onPress={handleAttend}>
+          <Text style={styles.attendButtonText}>Asistir</Text>
+        </Pressable>
+      )}
+
       <Text style={styles.sectionTitle}>Comentarios</Text>
 
       {!userHasCommented && (
         <>
-         
+
 
           <Button title="Agregar comentario" onPress={handleAddComment} />
 
-           <TextInput
+          <TextInput
             placeholder="Escribe un comentario..."
             value={commentText}
             onChangeText={setCommentText}
@@ -202,6 +250,19 @@ const EventDetailsScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  attendButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16
+  },
+
+  attendButton: {
+    backgroundColor: '#007AFF',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 16
+  },
   container: {
     padding: 16,
     backgroundColor: '#fff',

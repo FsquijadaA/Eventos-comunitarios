@@ -6,7 +6,7 @@ import { auth, db } from '../../../config/firebase';
 import { LineChart } from 'react-native-chart-kit';
 
 export default function MyEventsScreen() {
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<{ id: string; [key: string]: any }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

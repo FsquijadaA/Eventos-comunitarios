@@ -61,6 +61,7 @@ export default function Login() {
   };
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Eventos Comunitarios</Text>
       {errors.general && (
         <Text style={styles.errorGeneral}>{errors.general}</Text>
       )}
@@ -125,6 +126,14 @@ export default function Login() {
 }
 
 const styles = StyleSheet.create({
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+    color: '#007AFF',
+  },
+
   container: {
     flex: 1,
     justifyContent: 'center',
