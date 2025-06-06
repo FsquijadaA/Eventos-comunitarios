@@ -57,7 +57,7 @@ const EventDetailsScreen = () => {
       const docRef = doc(db, 'events', id!);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        const data = docSnap.data() as Omit<EventData, 'id'>; // aseguras el resto de propiedades
+        const data = docSnap.data() as Omit<EventData, 'id'>; 
         const eventData: EventData = { id: docSnap.id, ...data };
         setEvent(eventData);
         const currentUser = auth.currentUser;

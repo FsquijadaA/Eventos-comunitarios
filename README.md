@@ -54,7 +54,7 @@ Aplicación móvil desarrollada en React Native para permitir a una comunidad lo
 
 ---
 
-## 👥 Integrantes
+## 👥 Integrantes Grupo teórico #G01T
 
 - Carlos Adalberto Campos Hernández - CH222748  
 - José Valentín Corcios Segovia - CS232913  
@@ -76,5 +76,6 @@ La licenciante no puede revocar estas libertades en tanto usted siga los términ
 ## Enlaces de interés 👀
 
 - [Tablero en Trello] - https://trello.com/invite/b/68367e9994ddd7e64455f976/ATTIce0630d5d8240bb515a0264db9e38008141B74C5/proyecto-dps  
-- [Video de funcionamiento] - https://[Por Agregar]  
+- [Video de funcionamiento] - https://drive.google.com/file/d/13ATLlU5jblPA9pmxqYwKljCbGO724x84/view?usp=sharing
+- [Manual de usuario] - https://drive.google.com/file/d/1g42SEDzP7UJJBpe99kHp3rPEPamCJ7_O/view?usp=sharing
 - [Enlace a Mockups] - https://balsamiq.cloud/srifj34/pugqnwh  
